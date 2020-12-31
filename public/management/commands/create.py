@@ -35,8 +35,8 @@ class Command(BaseCommand):
             objs.pop(0)
         end = default_timer()
         print(f"It took {end - start} seconds to create the objects.")
-        num_trees = Tree.objects.count()
-        print("Count:", num_trees)
+        num_trees = Tree.objects.filter(parent__isnull=False).count()
+        print("Number of children:", num_trees)
         # Create random trees to make sure the numbers are correct
         Tree.objects.create()
         _a = Tree.objects.create()
@@ -46,12 +46,13 @@ class Command(BaseCommand):
 
         print("Beginning test with connectby")
         start = default_timer()
-        # Should be the correct number 732952
-        with connection.cursor() as c:
-            c.execute("""
-            """)
-            count = c.fetchone()[0]
-        assert count == num_trees
+        # Should be the correct number 732951 as of my stoppage point
+        # from data generation
+        # with connection.cursor() as c:
+        #     c.execute("""
+        #     """)
+        #     count = c.fetchone()[0]
+        # assert count == num_trees
         end = default_timer()
         print(f"It took {end - start} seconds.")
 
@@ -69,7 +70,7 @@ class Command(BaseCommand):
                FROM public_tree t, cte c
                WHERE t.parent_id = c.id
             )
-            SELECT COUNT(*)
+            SELECT COUNT(*) - 1
             FROM cte
             """, (initial.id,))
             count = c.fetchone()[0]
