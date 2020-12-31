@@ -26,12 +26,14 @@ class Command(BaseCommand):
         objs = [Tree.objects.first()]
         start = default_timer()
         t_end = time.time() + 60 * 2  # 2 minutes
-        while objs or time.time() < t_end:
+        while objs:
             # Decide if this has children
             if bool(random.getrandbits(1)) or objs[0].parent is None:
                 # Now figure out how many
                 for _ in range(random.randint(0, 5)):
                     objs.append(Tree.objects.create(parent=objs[0]))
+            if time.time() < t_end:
+                break
             objs.pop(0)
         end = default_timer()
         print(f"It took {end - start} seconds to create the objects.")
