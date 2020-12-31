@@ -25,5 +25,4 @@ jobs:
         - psql -c 'create database asdf;'
         - python manage.py migrate
       script:
-        - python manage.py test
         - python manage.py create
